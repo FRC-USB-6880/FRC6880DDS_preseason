@@ -24,3 +24,4 @@ How to setup your Desktop/Laptop to work on FRC Java software
 
 4) The repository currently only has a sample Robot.java file.
    You can navigate to the file in VScode via: 
+   FRC6880DDS_preseason/src/main/java/frc/robot/Robot.java
