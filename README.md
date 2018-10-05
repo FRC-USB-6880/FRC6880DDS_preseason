@@ -14,12 +14,17 @@ How to setup your Desktop/Laptop to work on FRC Java software
     https://code.visualstudio.com/docs/getstarted/introvideos#VSCode
 
 3) Clone this repository to your laptop/desktop using VScode:
+
     a) Open Command Palette
         Click on "View", then click on "Command Palette"
+
     b) Type "Git: Clone" in the command palette.
+
     c) Enter the following URL:
         https://github.com/FRC-USB-6880/FRC6880DDS_preseason.git
+
     d) Select a destination folder for the repository.
+
     e) Click on "Open Repository"
 
 4) The repository currently only has a sample Robot.java file.
