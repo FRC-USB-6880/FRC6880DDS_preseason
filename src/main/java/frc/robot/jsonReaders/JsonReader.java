@@ -41,7 +41,7 @@ public class JsonReader{
             System.out.println("frc6880:JsonReader: Error while trying to close "+filePath+". Error: "+e.getMessage());
         }
     }
-
+    
     public static void setBaseDir(String baseDir){
         JsonReader.baseDir = baseDir;
         
@@ -62,6 +62,10 @@ public class JsonReader{
         JsonReader.autonomousBlueDir = baseDir + "autonomous/blue/";
     }
 
+    protected void setRootObj(JSONObject obj){
+        rootObj = obj;
+    }
+
     protected String getString(String key){
         String value = null;
 
@@ -69,7 +73,7 @@ public class JsonReader{
             value = (String) rootObj.get(key);
         } catch (Exception e){
             e.printStackTrace();;
-            System.out.println("frc6880:JsonReader: Error getting value for the key "+key);
+            System.out.println("frc6880:JsonReader: Error getting String for the key "+key);
         }
         return value;
     }
@@ -81,7 +85,7 @@ public class JsonReader{
             value = (double) rootObj.get(key);
         } catch (Exception e){
             e.printStackTrace();
-            System.out.println("frc6880:JsonReader: Error getting value for the key "+key);
+            System.out.println("frc6880:JsonReader: Error getting double for the key "+key);
         }
         return value;
     }
@@ -93,7 +97,7 @@ public class JsonReader{
             value = (boolean) rootObj.get(key);
         } catch(Exception e){
             e.printStackTrace();
-            System.out.println("frc6880:JsonReader: Error getting value for the key "+key);
+            System.out.println("frc6880:JsonReader: Error getting boolean for the key "+key);
         }
         return value;
     }
@@ -102,10 +106,10 @@ public class JsonReader{
         int value = 0;
 
         try{
-            value = (int) rootObj.get(key);
+            value = (int) ((Long)rootObj.get(key)).intValue();
         } catch (Exception e){
             e.printStackTrace();
-            System.out.println("frc6880:JsonReader: Error getting value for the key "+key);
+            System.out.println("frc6880:JsonReader: Error getting int for the key "+key);
         }
         return value;
     }
@@ -116,8 +120,30 @@ public class JsonReader{
             array = (JSONArray) rootObj.get(key);
         } catch (Exception e){
             e.printStackTrace();
-            System.out.println("frc6880:JsonReader: Error getting value for the key "+key);
+            System.out.println("frc6880:JsonReader: Error getting JSONArray for the key "+key);
         }
         return array;
+    }
+
+    protected JSONObject getJSONObject(String key){
+        JSONObject obj = null;
+        try{
+            obj = (JSONObject) rootObj.get(key);
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("frc6880:JsonReader: Error getting JSONObject for the key "+key);
+        }
+        return obj;
+    }
+
+    protected Object getObject(String key){
+        Object obj = null;
+        try {
+            obj = (Object) rootObj.get(key);
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("frc6880:JsonReader: Error getting Object for key "+key);
+        }
+        return obj;
     }
 }
