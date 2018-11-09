@@ -92,6 +92,34 @@ public class DriveSysReader extends JsonReader {
     public String getDriveSysName(){
         return driveSysName;
     }
-
     
+    public double getGearRatio(String side){
+        double ratio = 10.71;
+        String key = "";
+        switch(side){
+            case "Left":
+                key = "gearRatioL";
+                break;
+            case "Right":
+                key = "gearRatioR";
+                break;
+            case "Left_LowSpeed":
+                key = "gearRatioL_loSpd";
+                break;
+            case "Left_HiSpeed":
+                key = "gearRatioL_hiSpd";
+                break;
+            case "Right_LowSpeed":
+                key = "gearRatioR_loSpd";
+                break;
+            case "Right_HiSpeed":
+                key = "gearRatioR_hiSpd";
+                break;
+            default:
+                key = "gearRatioL";
+                break;
+        }
+        ratio = getDouble(key);
+        return ratio;
+    }
 }
