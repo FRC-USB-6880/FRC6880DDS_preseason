@@ -6,31 +6,31 @@ public class RobotConfigReader extends JsonReader{
 
     public RobotConfigReader(String robotName){
         super(JsonReader.robotsFile);
-        setRootObj(getJSONObject(robotName));
+        setRootObj(getJSONObject(baseObj, robotName));
     }
 
     public String getDriveSysName(){
-        return getString("driveTrain");
+        return getString(baseObj, "driveTrain");
     }
 
     public String getNavigationOption(){
-        return getString("navigation");
+        return getString(baseObj, "navigation");
     }
 
     public String getAutoPosition(){
-        return getString("autonomousPosition");
+        return getString(baseObj, "autonomousPosition");
     }
 
     public String getAutoOption(){
-        return getString("autonomousOption");
+        return getString(baseObj, "autonomousOption");
     }
 
     public String[] getAttachments(String opmode){
         JSONArray rootArr = null;
         if(opmode.equalsIgnoreCase("autonomous"))
-            rootArr = getArray("autonomousAttachments");
+            rootArr = getArray(baseObj, "autonomousAttachments");
         else if(opmode.equalsIgnoreCase("teleop"))
-            rootArr = getArray("teleopAttachments");
+            rootArr = getArray(baseObj, "teleopAttachments");
         else
             System.out.println("frc6880:RobotConfigReader: Opmode "+opmode+" does not exist");
 
@@ -43,10 +43,10 @@ public class RobotConfigReader extends JsonReader{
     }
 
     public double getRobotWidth(){
-        return getDouble("robotWidth");
+        return getDouble(baseObj, "robotWidth");
     }
 
     public boolean isTankControl(){
-        return getBoolean("tankDriveStationConfig");
+        return getBoolean(baseObj, "tankDriveStationConfig");
     }
 }

@@ -15,7 +15,7 @@ public class JsonReader{
     private String filePath;
     public String jsonStr;
     private JSONParser parser = null;
-    public JSONObject rootObj = null;
+    protected JSONObject baseObj = null;
 
     public JsonReader(String filePath){
         this.filePath = filePath;
@@ -30,7 +30,7 @@ public class JsonReader{
 
         try{
             Object obj = parser.parse(fileReader);
-            rootObj = (JSONObject) obj;
+            baseObj = (JSONObject) obj;
         } catch(Exception e){
             System.out.println("frc6880:JsonReader: Error while parsing "+filePath+". Error: "+e.getMessage());
         }
@@ -63,14 +63,14 @@ public class JsonReader{
     }
 
     protected void setRootObj(JSONObject obj){
-        rootObj = obj;
+        baseObj = obj;
     }
 
-    protected String getString(String key){
+    protected String getString(JSONObject obj, String key){
         String value = null;
 
         try{
-            value = (String) rootObj.get(key);
+            value = (String) obj.get(key);
         } catch (Exception e){
             e.printStackTrace();;
             System.out.println("frc6880:JsonReader: Error getting String for the key "+key);
@@ -78,11 +78,11 @@ public class JsonReader{
         return value;
     }
 
-    protected double getDouble(String key){
+    protected double getDouble(JSONObject obj, String key){
         double value = 0.0;
 
         try{
-            value = (double) rootObj.get(key);
+            value = (double) obj.get(key);
         } catch (Exception e){
             e.printStackTrace();
             System.out.println("frc6880:JsonReader: Error getting double for the key "+key);
@@ -90,11 +90,11 @@ public class JsonReader{
         return value;
     }
 
-    protected boolean getBoolean(String key){
+    protected boolean getBoolean(JSONObject obj, String key){
         boolean value = false;
         
         try{
-            value = (boolean) rootObj.get(key);
+            value = (boolean) obj.get(key);
         } catch(Exception e){
             e.printStackTrace();
             System.out.println("frc6880:JsonReader: Error getting boolean for the key "+key);
@@ -102,11 +102,11 @@ public class JsonReader{
         return value;
     }
 
-    protected int getInt(String key){
+    protected int getInt(JSONObject obj, String key){
         int value = 0;
 
         try{
-            value = (int) ((Long)rootObj.get(key)).intValue();
+            value = (int) ((Long)obj.get(key)).intValue();
         } catch (Exception e){
             e.printStackTrace();
             System.out.println("frc6880:JsonReader: Error getting int for the key "+key);
@@ -114,10 +114,10 @@ public class JsonReader{
         return value;
     }
 
-    protected JSONArray getArray(String key){
+    protected JSONArray getArray(JSONObject obj, String key){
         JSONArray array = null;
         try{
-            array = (JSONArray) rootObj.get(key);
+            array = (JSONArray) obj.get(key);
         } catch (Exception e){
             e.printStackTrace();
             System.out.println("frc6880:JsonReader: Error getting JSONArray for the key "+key);
@@ -125,7 +125,7 @@ public class JsonReader{
         return array;
     }
 
-    protected JSONObject getJSONObject(String key){
+    protected JSONObject getJSONObject(JSONObject rootObj, String key){
         JSONObject obj = null;
         try{
             obj = (JSONObject) rootObj.get(key);
@@ -136,7 +136,7 @@ public class JsonReader{
         return obj;
     }
 
-    protected Object getObject(String key){
+    protected Object getObject(JSONObject rootObj, String key){
         Object obj = null;
         try {
             obj = (Object) rootObj.get(key);
