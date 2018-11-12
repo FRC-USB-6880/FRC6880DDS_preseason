@@ -7,9 +7,16 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.attachments.Attachment;
+import frc.robot.autonomousTasks.Task;
+import frc.robot.jsonReaders.AttachmentsReader;
+import frc.robot.jsonReaders.AutonomousOptionsReader;
+import frc.robot.jsonReaders.RobotConfigReader;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +30,11 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private RobotConfigReader robotConfigReader;
+  private AttachmentsReader attachmentsReader;
+  private ArrayList<Attachment> attachments;
+  private AutonomousOptionsReader autonomousOptReader;
+  private ArrayList<Task> tasks;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -33,6 +45,15 @@ public class Robot extends TimedRobot {
     m_chooser.addDefault("Default Auto", kDefaultAuto);
     m_chooser.addObject("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    robotConfigReader = new RobotConfigReader("robotName");
+
+    attachmentsReader = new AttachmentsReader();
+    ArrayList<Object[]> attachmentsArr = attachmentsReader.getAttachments();
+    attachments = new ArrayList<>();
+    for(Object[] obj : attachmentsArr){
+      attachments.add(createAttachment((String)obj[0], (ArrayList<Object[]>)obj[1]));
+    }
   }
 
   /**
@@ -60,6 +81,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    String autoPos = robotConfigReader.getAutoPosition();
+    String autoOption = robotConfigReader.getAutoOption();
+    autonomousOptReader = new AutonomousOptionsReader(autoPos, autoOption);
+    ArrayList<Object[]> tasksArr = autonomousOptReader.getTasks();
+    tasks = new ArrayList<>();
+    for(Object[] obj : tasksArr){
+      tasks.add(createTask((String)obj[0], (ArrayList<Object[]>)obj[1]));
+    }
+    for(Task task : tasks){
+      task.initTask();
+    }
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -93,5 +125,25 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  private Attachment createAttachment(String name, ArrayList<Object[]> params){
+    Attachment attachment=null;
+    switch(name){
+      case "Lift":
+        break;
+    }
+
+    return attachment;
+  }
+
+  private Task createTask(String name, ArrayList<Object[]> params){
+    Task task = null;
+    switch(name){
+      case "MoveDistance":
+        break;
+    }
+
+    return task;
   }
 }
