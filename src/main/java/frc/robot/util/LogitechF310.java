@@ -6,7 +6,6 @@ public class LogitechF310 extends Joystick{
     //Axes
     private static final int AXIS_LEFT_X = 0;
     private static final int AXIS_LEFT_Y = 1;
-    private static final int AXIS_SHOULDER = -1;		//TBD
 	private static final int AXIS_RIGHT_X = 4;
 	private static final int AXIS_RIGHT_Y = 5;
 	private static final int AXIS_LEFT_TRIGGER = 2;

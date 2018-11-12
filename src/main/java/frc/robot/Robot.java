@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.attachments.Attachment;
 import frc.robot.attachments.CubeHandler;
 import frc.robot.attachments.Lift;
 import frc.robot.autonomousTasks.Task;
@@ -33,6 +32,7 @@ import frc.robot.util.LogitechF310;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
+@SuppressWarnings("unchecked")
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import frc.robot.autonomousTasks.Task;
 
 public class AutonomousOptionsReader extends JsonReader{
     ArrayList<Object[]> tasks;
