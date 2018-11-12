@@ -13,10 +13,18 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.attachments.Attachment;
+import frc.robot.attachments.CubeHandler;
+import frc.robot.attachments.Lift;
 import frc.robot.autonomousTasks.Task;
+import frc.robot.driveSystems.DriveSystem;
+import frc.robot.driveSystems.TalonSRX2spdDriveSystem;
+import frc.robot.driveSystems.TalonSRXDriveSystem;
+import frc.robot.driveSystems.VictorSPDriveSystem;
 import frc.robot.jsonReaders.AttachmentsReader;
 import frc.robot.jsonReaders.AutonomousOptionsReader;
+import frc.robot.jsonReaders.DriveSysReader;
 import frc.robot.jsonReaders.RobotConfigReader;
+import frc.robot.util.LogitechF310;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,9 +40,15 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private RobotConfigReader robotConfigReader;
   private AttachmentsReader attachmentsReader;
-  private ArrayList<Attachment> attachments;
   private AutonomousOptionsReader autonomousOptReader;
   private ArrayList<Task> tasks;
+  private LogitechF310 gamepad1;
+  private LogitechF310 gamepad2;
+
+  public DriveSysReader driveSysReader;
+  public DriveSystem driveSys;
+  public CubeHandler cubeHandler=null;
+  public Lift lift=null;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -48,12 +62,17 @@ public class Robot extends TimedRobot {
 
     robotConfigReader = new RobotConfigReader("robotName");
 
+    driveSysReader = new DriveSysReader(robotConfigReader.getDriveSysName());
+    driveSys = createDriveSystem(robotConfigReader.getDriveSysName());
+
     attachmentsReader = new AttachmentsReader();
     ArrayList<Object[]> attachmentsArr = attachmentsReader.getAttachments();
-    attachments = new ArrayList<>();
     for(Object[] obj : attachmentsArr){
-      attachments.add(createAttachment((String)obj[0], (ArrayList<Object[]>)obj[1]));
+      createAttachments((String)obj[0], (ArrayList<Object[]>)obj[1]);
     }
+
+    gamepad1 = new LogitechF310(0);
+    gamepad2 = new LogitechF310(1);
   }
 
   /**
@@ -66,6 +85,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    driveSys.arcadeDrive(gamepad1.leftStickY(), gamepad1.rightStickX());
+
+    if(lift != null){
+      lift.move(gamepad2.leftStickX());
+    }
+
+    if(cubeHandler != null){
+      if(gamepad2.a())
+        cubeHandler.engage();
+      if(gamepad2.y())
+        cubeHandler.disengage();
+    }
   }
 
   /**
@@ -127,14 +158,29 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
-  private Attachment createAttachment(String name, ArrayList<Object[]> params){
-    Attachment attachment=null;
+  private DriveSystem createDriveSystem(String name){
+    switch(name){
+      case "4VictorSP-1spd-WestCoastDrive":
+        return new VictorSPDriveSystem();
+      case "CAN-4TalonSRX-2spd-WestCoastDrive":
+        return new TalonSRX2spdDriveSystem();
+      case "CAN-4TalonSRX-1spd-WestCoastDrive":
+        return new TalonSRXDriveSystem();
+      case "CAN-4TalonSRX-1spd-WestCoastDrive_practiceRobot":
+        return new TalonSRXDriveSystem();
+    }
+    return null;
+  }
+
+  private void createAttachments(String name, ArrayList<Object[]> params){
     switch(name){
       case "Lift":
+        lift = new Lift(params);
+        break;
+      case "CubeHandler":
+        cubeHandler = new CubeHandler(params);
         break;
     }
-
-    return attachment;
   }
 
   private Task createTask(String name, ArrayList<Object[]> params){
