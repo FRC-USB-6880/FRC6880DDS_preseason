@@ -10,9 +10,11 @@ public class CubeHandler
     int forwardChannel;
     int reverseChannel;
     boolean isOpen;
+    private ArrayList<Object[]> params;
 
-    public CubeHandler(FRCRobot robot, int fwdChannel, int rvrsChannel) //need to remove 2nd and 3rd parameters
+    public CubeHandler(ArrayList<Object[]> params) //need to remove 2nd and 3rd parameters
     {
+        this.params = params;
         this.robot = robot;
         forwardChannel = fwdChannel;
         reverseChannel = rvrsChannel;

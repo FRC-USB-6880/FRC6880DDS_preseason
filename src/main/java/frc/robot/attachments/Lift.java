@@ -1,7 +1,7 @@
-package org.usfirst.frc.team6880.robot.attachments;
-import org.usfirst.frc.team6880.robot.FRCRobot;
-import org.usfirst.frc.team6880.robot.jsonReaders.AttachmentsReader;
-import org.usfirst.frc.team6880.robot.jsonReaders.JsonReader;
+package frc.robot.attachments;
+import frc.robot.Robot;
+
+import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Lift
 {
-	FRCRobot robot;
+	Robot robot;
 	WPI_TalonSRX liftMotor;
 	private double height;
 	public Encoder liftEncoder;
@@ -26,7 +26,8 @@ public class Lift
 	private double spoolCircumference;
 	private double distancePerCount;
 	private double curPower;
-	private long targetPos;
+    private long targetPos;
+    private ArrayList<Object[]> params;
 
     AttachmentsReader configReader;
     boolean isMoving;
@@ -34,8 +35,9 @@ public class Lift
     /**
      * 
      */
-    public Lift(FRCRobot robot)
+    public Lift(ArrayList<Object[]> params)
     {
+        this.params = params;
     	this.robot = robot;
     	configReader = new AttachmentsReader(JsonReader.attachmentsFile, "Lift");
         spoolDiameter = configReader.getLiftSpoolDiameter();
@@ -132,5 +134,4 @@ public class Lift
 	public boolean isMoving() {
 		return isMoving;
 	}
-
 }

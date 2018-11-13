@@ -7,9 +7,23 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.attachments.CubeHandler;
+import frc.robot.attachments.Lift;
+import frc.robot.autonomousTasks.Task;
+import frc.robot.driveSystems.DriveSystem;
+import frc.robot.driveSystems.TalonSRX2spdDriveSystem;
+import frc.robot.driveSystems.TalonSRXDriveSystem;
+import frc.robot.driveSystems.VictorSPDriveSystem;
+import frc.robot.jsonReaders.AttachmentsReader;
+import frc.robot.jsonReaders.AutonomousOptionsReader;
+import frc.robot.jsonReaders.DriveSysReader;
+import frc.robot.jsonReaders.RobotConfigReader;
+import frc.robot.util.LogitechF310;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -18,11 +32,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
+@SuppressWarnings("unchecked")
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private RobotConfigReader robotConfigReader;
+  private AttachmentsReader attachmentsReader;
+  private AutonomousOptionsReader autonomousOptReader;
+  private ArrayList<Task> tasks;
+  private LogitechF310 gamepad1;
+  private LogitechF310 gamepad2;
+
+  public DriveSysReader driveSysReader;
+  public DriveSystem driveSys;
+  public CubeHandler cubeHandler=null;
+  public Lift lift=null;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -33,6 +59,20 @@ public class Robot extends TimedRobot {
     m_chooser.addDefault("Default Auto", kDefaultAuto);
     m_chooser.addObject("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    robotConfigReader = new RobotConfigReader("robotName");
+
+    driveSysReader = new DriveSysReader(robotConfigReader.getDriveSysName());
+    driveSys = createDriveSystem(robotConfigReader.getDriveSysName());
+
+    attachmentsReader = new AttachmentsReader();
+    ArrayList<Object[]> attachmentsArr = attachmentsReader.getAttachments();
+    for(Object[] obj : attachmentsArr){
+      createAttachments((String)obj[0], (ArrayList<Object[]>)obj[1]);
+    }
+
+    gamepad1 = new LogitechF310(0);
+    gamepad2 = new LogitechF310(1);
   }
 
   /**
@@ -45,6 +85,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    driveSys.arcadeDrive(gamepad1.leftStickY(), gamepad1.rightStickX());
+
+    if(lift != null){
+      lift.move(gamepad2.leftStickX());
+    }
+
+    if(cubeHandler != null){
+      if(gamepad2.a())
+        cubeHandler.engage();
+      if(gamepad2.y())
+        cubeHandler.disengage();
+    }
   }
 
   /**
@@ -60,6 +112,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    String autoPos = robotConfigReader.getAutoPosition();
+    String autoOption = robotConfigReader.getAutoOption();
+    autonomousOptReader = new AutonomousOptionsReader(autoPos, autoOption);
+    ArrayList<Object[]> tasksArr = autonomousOptReader.getTasks();
+    tasks = new ArrayList<>();
+    for(Object[] obj : tasksArr){
+      tasks.add(createTask((String)obj[0], (ArrayList<Object[]>)obj[1]));
+    }
+    for(Task task : tasks){
+      task.initTask();
+    }
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -93,5 +156,40 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+  }
+
+  private DriveSystem createDriveSystem(String name){
+    switch(name){
+      case "4VictorSP-1spd-WestCoastDrive":
+        return new VictorSPDriveSystem();
+      case "CAN-4TalonSRX-2spd-WestCoastDrive":
+        return new TalonSRX2spdDriveSystem();
+      case "CAN-4TalonSRX-1spd-WestCoastDrive":
+        return new TalonSRXDriveSystem();
+      case "CAN-4TalonSRX-1spd-WestCoastDrive_practiceRobot":
+        return new TalonSRXDriveSystem();
+    }
+    return null;
+  }
+
+  private void createAttachments(String name, ArrayList<Object[]> params){
+    switch(name){
+      case "Lift":
+        lift = new Lift(params);
+        break;
+      case "CubeHandler":
+        cubeHandler = new CubeHandler(params);
+        break;
+    }
+  }
+
+  private Task createTask(String name, ArrayList<Object[]> params){
+    Task task = null;
+    switch(name){
+      case "MoveDistance":
+        break;
+    }
+
+    return task;
   }
 }
