@@ -38,15 +38,13 @@ public class Lift
     {
     	this.robot = robot;
     	configReader = new AttachmentsReader(JsonReader.attachmentsFile, "Lift");
-    	int liftMotorCANid = configReader.getLiftControllerCANid();
-    	double liftMotorRampTime = configReader.getLiftMotorOpenLoopRampTime();
         spoolDiameter = configReader.getLiftSpoolDiameter();
         lowRange = configReader.getLiftPos_encoderCounts("liftPos_lowRange");
         midRange =  configReader.getLiftPos_encoderCounts("liftPos_midRange");
         highRange = configReader.getLiftPos_encoderCounts("liftPos_highRange");
         rangeValue = highRange[1]/2;
 
-        liftMotor = new WPI_TalonSRX(liftMotorCANid);
+        liftMotor = new WPI_TalonSRX(configReader.getLiftControllerCANid());
 
     	height = 0;
     	spoolCircumference = Math.PI * spoolDiameter;
@@ -86,13 +84,14 @@ public class Lift
     
     public void moveWithPower(double power)
     {
-//    	if(power<0)
-//    		liftMotor.set(checkLowerLimit() ? 0.0 : power);
-//    	else if(power>0)
-//    		liftMotor.set(checkUpperLimit() ? 0.0 : power);
-//    	displayCurrentPosition();
+    	if(power<0)
+    		liftMotor.set(checkLowerLimit() ? 0.0 : power);
+    	else if(power>0)
+    		liftMotor.set(checkUpperLimit() ? 0.0 : power);
+    	displayCurrentPosition();
     	liftMotor.set(power);
-    	curPower = power;
+		curPower = power;
+		isMoving = true;
     }
     public void displayCurrentPosition()
     {
@@ -116,6 +115,7 @@ public class Lift
 		}
 		
 		stop();
+		isMoving = false;
 		return true;
     }
     
